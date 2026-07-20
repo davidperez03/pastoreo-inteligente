@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: srp
+      POSTGRES_PASSWORD: srp
+      POSTGRES_DB: srp
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U srp -d srp"]
+      interval: 2s
+      timeout: 3s
+      retries: 20

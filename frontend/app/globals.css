@@ -1,0 +1,29 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1a2b1a;
+  background: #fafcf8;
+}
+
+.nav {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #dbe5d6;
+  background: #ffffff;
+}
+
+.nav a {
+  color: #2d5a27;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+main {
+  padding: 1.5rem;
+}

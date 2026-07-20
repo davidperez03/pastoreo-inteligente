@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+dist/
+
+# Node
+node_modules/
+.next/
+out/
+
+# Entorno
+.env
+.env.local
+
+# Datos locales
+*.tif
+*.SAFE/

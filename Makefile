@@ -15,13 +15,14 @@ test:
 	cd backend && pytest
 
 api:
-	cd backend && uvicorn srp.app:create_app --factory --reload
+	cd backend && PYTHONPATH=src uvicorn srp.app:create_app --factory --reload
 
+# Carga backend/.env (credenciales CDSE, ver docs/credenciales-cdse.md) si existe
 worker:
-	cd backend && python -m srp.worker
+	cd backend && if [ -f .env ]; then set -a; . ./.env; set +a; fi; PYTHONPATH=src python -m srp.worker
 
 worker-una-vez:
-	cd backend && python -m srp.worker --una-vez
+	cd backend && if [ -f .env ]; then set -a; . ./.env; set +a; fi; PYTHONPATH=src python -m srp.worker --una-vez
 
 front:
 	cd frontend && npm run dev

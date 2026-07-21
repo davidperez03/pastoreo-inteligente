@@ -1,0 +1,143 @@
+.mapa {
+  height: 420px;
+  width: 100%;
+  border: 1px solid #dbe5d6;
+  border-radius: 8px;
+  z-index: 0;
+}
+
+/* Icono de vértice arrastrable (divIcon de Leaflet). */
+.vertice {
+  background: #ffffff;
+  border: 3px solid #2d7a27;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+}
+
+.contenedor {
+  display: grid;
+  gap: 1rem;
+  max-width: 900px;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #dbe5d6;
+  padding-bottom: 0.5rem;
+}
+
+.tab {
+  padding: 0.35rem 0.9rem;
+  border: 1px solid #dbe5d6;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #2d5a27;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.tabActiva {
+  composes: tab;
+  background: #2d5a27;
+  border-color: #2d5a27;
+  color: #ffffff;
+}
+
+.botonera {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.boton {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #2d5a27;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #2d5a27;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.boton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.botonPrimario {
+  composes: boton;
+  background: #2d5a27;
+  color: #ffffff;
+}
+
+.area {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1a2b1a;
+}
+
+.ayuda {
+  color: #5a6b56;
+  font-size: 0.9rem;
+}
+
+.formulario {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 480px;
+  padding: 1rem;
+  border: 1px solid #dbe5d6;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.campo {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #c6d2c0;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 400;
+}
+
+.textareaCoordenadas {
+  width: 100%;
+  min-height: 140px;
+  font-family: ui-monospace, monospace;
+}
+
+.exito {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #9ac48f;
+  border-radius: 6px;
+  background: #eef7ea;
+  color: #1e4d18;
+}
+
+.error {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d9a0a0;
+  border-radius: 6px;
+  background: #fbeeee;
+  color: #7a1f1f;
+}
+
+.advertencia {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d9c98a;
+  border-radius: 6px;
+  background: #fbf6e4;
+  color: #6b5a10;
+}

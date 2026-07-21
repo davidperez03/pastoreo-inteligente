@@ -19,3 +19,6 @@ out/
 # Datos locales
 *.tif
 *.SAFE/
+
+# Claude Code (worktrees de agentes, settings locales)
+.claude/

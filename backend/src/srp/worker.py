@@ -33,21 +33,28 @@ TZ = ZoneInfo("America/Bogota")
 
 
 def _adapter_ndvi(pool):
-    """Construye el adaptador CDSE cuando esté completa la descarga de bandas.
+    """Construye el adaptador CDSE si hay credenciales completas.
 
-    El catálogo y el cálculo de NDVI ya existen (infra_ndvi), pero la descarga
-    real desde el bucket S3 `eodata` del CDSE requiere credenciales y está
-    pendiente; hasta implementarla, el job semanal no se programa (arrancarlo
-    solo produciría fallos por potrero al no poder descargar escenas)."""
+    Requiere el client OAuth del catálogo (SRP_CDSE_CLIENT_ID/SECRET) y las
+    llaves S3 de eodata (SRP_CDSE_S3_ACCESS_KEY/SECRET_KEY); sin cualquiera
+    de los dos pares, el job semanal no se programa."""
     if not (
         os.environ.get("SRP_CDSE_CLIENT_ID") and os.environ.get("SRP_CDSE_CLIENT_SECRET")
     ):
         return None
-    logger.warning(
-        "Credenciales CDSE presentes pero la descarga S3 de bandas aún no está "
-        "implementada; el job NDVI queda sin programar"
-    )
-    return None
+    from srp.agronomia.infra_ndvi.adapter import CopernicusNdviAdapter
+    from srp.agronomia.infra_ndvi.cdse_auth import CdseAuth
+    from srp.agronomia.infra_ndvi.cdse_catalogo import CatalogoCdse
+    from srp.agronomia.infra_ndvi.descarga_s3 import crear_desde_env
+
+    descargador = crear_desde_env()
+    if descargador is None:
+        logger.warning(
+            "Client OAuth CDSE presente pero faltan las llaves S3 "
+            "(SRP_CDSE_S3_ACCESS_KEY/SECRET_KEY): job NDVI no programado"
+        )
+        return None
+    return CopernicusNdviAdapter(CatalogoCdse(CdseAuth()), descargador, pool)
 
 
 async def _ciclo_una_vez(pool) -> None:
@@ -95,7 +102,8 @@ async def main() -> None:
             )
         else:
             logger.warning(
-                "Sin credenciales CDSE (SRP_CDSE_CLIENT_ID/SECRET): job NDVI no programado"
+                "Adaptador NDVI no disponible (ver credenciales CDSE): "
+                "job semanal no programado"
             )
         scheduler.start()
         logger.info("Worker SRP iniciado; jobs: %s", [j.id for j in scheduler.get_jobs()])

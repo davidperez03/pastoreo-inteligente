@@ -17,5 +17,11 @@ test:
 api:
 	cd backend && uvicorn srp.app:create_app --factory --reload
 
+worker:
+	cd backend && python -m srp.worker
+
+worker-una-vez:
+	cd backend && python -m srp.worker --una-vez
+
 front:
 	cd frontend && npm run dev

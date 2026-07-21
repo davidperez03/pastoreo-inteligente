@@ -1,0 +1,247 @@
+/* Estilos del dashboard (Unidad 10). Sin tocar globals.css.
+ * Colores de estado (semáforo): verde=listo, ámbar=descanso, rojo=ocupado.
+ * El estado nunca se comunica solo por color: siempre lleva etiqueta de texto. */
+
+.bandaMock {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e6cf8a;
+  border-left: 4px solid #fab219;
+  border-radius: 6px;
+  background: #fdf6e3;
+  color: #6b5310;
+  font-size: 0.875rem;
+}
+
+.seccion {
+  margin-top: 2rem;
+}
+
+.seccion h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.subtitulo {
+  color: #52514e;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.cargando {
+  color: #898781;
+  padding: 1rem 0;
+}
+
+/* --- Semáforo de potreros --------------------------------------------- */
+
+.gridPotreros {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.9rem;
+}
+
+.tarjeta {
+  display: block;
+  border: 1px solid #dbe5d6;
+  border-left-width: 5px;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0.85rem 1rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 120ms ease;
+}
+
+.tarjeta:hover {
+  box-shadow: 0 2px 8px rgba(26, 43, 26, 0.12);
+}
+
+.tarjetaListo {
+  border-left-color: #0ca30c;
+}
+
+.tarjetaDescanso {
+  border-left-color: #fab219;
+}
+
+.tarjetaOcupado {
+  border-left-color: #d03b3b;
+}
+
+.tarjetaCabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tarjetaNombre {
+  font-weight: 600;
+}
+
+.insignia {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.insigniaListo {
+  background: #e3f4e3;
+  color: #075c07;
+}
+
+.insigniaDescanso {
+  background: #fdf1d4;
+  color: #6b5310;
+}
+
+.insigniaOcupado {
+  background: #fbe4e4;
+  color: #8c2323;
+}
+
+.tarjetaDatos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.dato dt {
+  color: #898781;
+  font-size: 0.72rem;
+}
+
+.dato dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Tablas (lotes, sugerencias) -------------------------------------- */
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border: 1px solid #dbe5d6;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.875rem;
+}
+
+.tabla th {
+  text-align: left;
+  font-size: 0.75rem;
+  color: #52514e;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid #dbe5d6;
+  background: #f4f8f2;
+}
+
+.tabla td {
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid #eef3ec;
+}
+
+.tabla tr:last-child td {
+  border-bottom: none;
+}
+
+.numero {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.tabla th.numero {
+  text-align: right;
+}
+
+.movimiento {
+  white-space: nowrap;
+}
+
+.flecha {
+  color: #898781;
+  padding: 0 0.35rem;
+}
+
+.vacio {
+  color: #898781;
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+}
+
+/* --- Detalle de potrero / gráfico -------------------------------------- */
+
+.migas {
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.migas a {
+  color: #2d5a27;
+}
+
+.fichaPotrero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.chip {
+  border: 1px solid #dbe5d6;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.chip strong {
+  display: block;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.panelGrafico {
+  border: 1px solid #dbe5d6;
+  border-radius: 8px;
+  background: #fcfcfb;
+  padding: 1rem;
+}
+
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-size: 0.8rem;
+  color: #52514e;
+  margin-bottom: 0.6rem;
+}
+
+.leyendaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.svgGrafico {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.explicacion {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #52514e;
+  line-height: 1.5;
+  max-width: 62ch;
+}

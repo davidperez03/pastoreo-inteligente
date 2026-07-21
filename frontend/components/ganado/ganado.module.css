@@ -1,0 +1,45 @@
+.formCrear {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr auto;
+  gap: var(--espacio-3);
+  align-items: end;
+  margin-bottom: var(--espacio-5);
+}
+@media (max-width: 640px) {
+  .formCrear {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filaLote {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  flex-wrap: wrap;
+}
+
+.filaLote__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.filaLote__nombre {
+  font-weight: 650;
+}
+.filaLote__meta {
+  font-size: 0.82rem;
+  color: var(--texto-tenue);
+}
+
+.accionInline {
+  display: flex;
+  gap: var(--espacio-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.accionInline select,
+.accionInline input {
+  width: auto;
+  min-width: 10rem;
+}

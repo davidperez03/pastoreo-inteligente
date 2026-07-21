@@ -7,19 +7,20 @@
  * planimetría imprecisa (§3.5 del SRP).
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { api, ApiError } from "@/lib/api";
-import {
-  ESPECIES_PASTO,
-  METODOS_LEVANTAMIENTO,
-  TIPOS_SUELO,
-} from "./tipos";
+import Boton from "@/components/ui/Boton";
+import { Campo, CampoSelect } from "@/components/ui/Campo";
+import Tarjeta from "@/components/ui/Tarjeta";
+import { ApiError } from "@/lib/api";
+import { especiesApi } from "@/lib/fincas";
+import { useFincaActual } from "@/lib/finca-actual";
+import { potrerosApi, type PotreroApi } from "@/lib/potreros";
+import { ESPECIES_PASTO, METODOS_LEVANTAMIENTO, TIPOS_SUELO } from "./tipos";
 import type {
   CuerpoCrearPotrero,
   MetodoLevantamiento,
   PuntoLatLng,
-  RespuestaPotrero,
   TipoSuelo,
 } from "./tipos";
 import styles from "./mapa.module.css";
@@ -27,27 +28,46 @@ import styles from "./mapa.module.css";
 type EstadoEnvio =
   | { tipo: "inicial" }
   | { tipo: "enviando" }
-  | { tipo: "exito"; respuesta: RespuestaPotrero }
+  | { tipo: "exito"; respuesta: PotreroApi }
   | { tipo: "error"; mensaje: string };
 
-export default function FormularioPotrero({
-  puntos,
-}: {
-  puntos: PuntoLatLng[];
-}) {
+/** Solo lo que este formulario necesita renderizar de una especie — evita
+ * acoplar el fallback local (tipos.ts) a la forma exacta de la API. */
+interface OpcionEspecie {
+  id: string;
+  nombre: string;
+}
+
+export default function FormularioPotrero({ puntos }: { puntos: PuntoLatLng[] }) {
+  const { fincaId, finca } = useFincaActual();
+  const [especies, setEspecies] = useState<OpcionEspecie[]>([...ESPECIES_PASTO]);
   const [nombre, setNombre] = useState("");
   const [especieId, setEspecieId] = useState<string>(ESPECIES_PASTO[0].id);
   const [tipoSuelo, setTipoSuelo] = useState<TipoSuelo>("franco");
   const [metodo, setMetodo] = useState<MetodoLevantamiento>("gps_celular");
   const [accuracy, setAccuracy] = useState("5");
-  // finca_id como texto temporal: en integración vendrá de la sesión/selector.
-  // Precargado con la finca de backend/scripts/seed_demo.py para poder
-  // probar el formulario sin tener que copiar el id a mano.
-  const [fincaId, setFincaId] = useState("22222222-2222-2222-2222-222222222222");
   const [estado, setEstado] = useState<EstadoEnvio>({ tipo: "inicial" });
+
+  useEffect(() => {
+    especiesApi
+      .listar()
+      .then((lista) => {
+        if (lista.length > 0) {
+          setEspecies(lista);
+          setEspecieId(lista[0].id);
+        }
+      })
+      .catch(() => {
+        /* deja las especies hardcodeadas como fallback */
+      });
+  }, []);
 
   async function enviar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
+    if (!fincaId) {
+      setEstado({ tipo: "error", mensaje: "Elige o crea una finca antes de guardar." });
+      return;
+    }
     if (puntos.length < 3) {
       setEstado({
         tipo: "error",
@@ -64,7 +84,7 @@ export default function FormularioPotrero({
       return;
     }
     const cuerpo: CuerpoCrearPotrero = {
-      finca_id: fincaId.trim(),
+      finca_id: fincaId,
       nombre: nombre.trim(),
       puntos,
       especie_pasto_id: especieId,
@@ -74,7 +94,7 @@ export default function FormularioPotrero({
     };
     setEstado({ tipo: "enviando" });
     try {
-      const respuesta = await api.post<RespuestaPotrero>("/potreros/", cuerpo);
+      const respuesta = await potrerosApi.crear(cuerpo);
       setEstado({ tipo: "exito", respuesta });
     } catch (err) {
       if (err instanceof ApiError) {
@@ -93,88 +113,70 @@ export default function FormularioPotrero({
   }
 
   return (
-    <form className={styles.formulario} onSubmit={enviar}>
+    <Tarjeta as="form" onSubmit={enviar} className={styles.formulario}>
       <h2>Guardar potrero</h2>
-      <label className={styles.campo}>
-        Nombre del potrero
-        <input
-          type="text"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          required
-          placeholder="Ej: La Esperanza 3"
-        />
-      </label>
-      <label className={styles.campo}>
-        Especie de pasto
-        <select
-          value={especieId}
-          onChange={(e) => setEspecieId(e.target.value)}
-        >
-          {ESPECIES_PASTO.map((especie) => (
-            <option key={especie.id} value={especie.id}>
-              {especie.nombre}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className={styles.campo}>
-        Tipo de suelo
-        <select
-          value={tipoSuelo}
-          onChange={(e) => setTipoSuelo(e.target.value as TipoSuelo)}
-        >
-          {TIPOS_SUELO.map((tipo) => (
-            <option key={tipo} value={tipo}>
-              {tipo}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className={styles.campo}>
-        Método de levantamiento
-        <select
-          value={metodo}
-          onChange={(e) => setMetodo(e.target.value as MetodoLevantamiento)}
-        >
-          {METODOS_LEVANTAMIENTO.map((m) => (
-            <option key={m.valor} value={m.valor}>
-              {m.etiqueta}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className={styles.campo}>
-        Precisión del levantamiento (m)
-        <input
-          type="number"
-          value={accuracy}
-          onChange={(e) => setAccuracy(e.target.value)}
-          min="0"
-          step="any"
-          required
-        />
-      </label>
-      <label className={styles.campo}>
-        Finca (id)
-        <input
-          type="text"
-          value={fincaId}
-          onChange={(e) => setFincaId(e.target.value)}
-          required
-          placeholder="Id de la finca (temporal)"
-        />
-      </label>
-      <button
-        type="submit"
-        className={styles.botonPrimario}
-        disabled={estado.tipo === "enviando"}
+
+      <p style={{ fontSize: "0.85rem", color: "var(--texto-tenue)", marginBottom: "1rem" }}>
+        Finca: <strong>{finca?.nombre ?? "ninguna seleccionada"}</strong>{" "}
+        {!fincaId && <a href="/fincas">— crear una</a>}
+      </p>
+
+      <Campo
+        etiqueta="Nombre del potrero"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        required
+        placeholder="Ej: La Esperanza 3"
+      />
+      <CampoSelect
+        etiqueta="Especie de pasto"
+        value={especieId}
+        onChange={(e) => setEspecieId(e.target.value)}
       >
-        {estado.tipo === "enviando" ? "Guardando…" : "Guardar potrero"}
-      </button>
+        {especies.map((especie) => (
+          <option key={especie.id} value={especie.id}>
+            {especie.nombre}
+          </option>
+        ))}
+      </CampoSelect>
+      <CampoSelect
+        etiqueta="Tipo de suelo"
+        value={tipoSuelo}
+        onChange={(e) => setTipoSuelo(e.target.value as TipoSuelo)}
+      >
+        {TIPOS_SUELO.map((tipo) => (
+          <option key={tipo} value={tipo}>
+            {tipo}
+          </option>
+        ))}
+      </CampoSelect>
+      <CampoSelect
+        etiqueta="Método de levantamiento"
+        value={metodo}
+        onChange={(e) => setMetodo(e.target.value as MetodoLevantamiento)}
+      >
+        {METODOS_LEVANTAMIENTO.map((m) => (
+          <option key={m.valor} value={m.valor}>
+            {m.etiqueta}
+          </option>
+        ))}
+      </CampoSelect>
+      <Campo
+        etiqueta="Precisión del levantamiento (m)"
+        type="number"
+        value={accuracy}
+        onChange={(e) => setAccuracy(e.target.value)}
+        min="0"
+        step="any"
+        required
+      />
+
+      <Boton type="submit" cargando={estado.tipo === "enviando"} style={{ width: "100%" }}>
+        Guardar potrero
+      </Boton>
 
       {estado.tipo === "exito" && (
-        <div>
+        <div style={{ marginTop: "1rem" }}>
           <p className={styles.exito}>
             Potrero guardado correctamente.
             {typeof estado.respuesta.area_ha === "number"
@@ -182,9 +184,7 @@ export default function FormularioPotrero({
               : ""}
           </p>
           {estado.respuesta.advertencia ? (
-            <p className={styles.advertencia}>
-              Advertencia: {estado.respuesta.advertencia}
-            </p>
+            <p className={styles.advertencia}>Advertencia: {estado.respuesta.advertencia}</p>
           ) : null}
         </div>
       )}
@@ -193,6 +193,6 @@ export default function FormularioPotrero({
           {estado.mensaje}
         </p>
       )}
-    </form>
+    </Tarjeta>
   );
 }

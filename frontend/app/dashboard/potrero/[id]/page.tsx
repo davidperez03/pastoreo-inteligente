@@ -7,6 +7,7 @@ import RequireAuth from "@/components/auth/RequireAuth";
 import GraficoHistorial from "@/components/dashboard/GraficoHistorial";
 import { obtenerHistorial, obtenerPotreros } from "@/components/dashboard/datos";
 import type { PotreroResumen, PuntoHistorial } from "@/components/dashboard/tipos";
+import { useFincaActual } from "@/lib/finca-actual";
 import styles from "@/components/dashboard/dashboard.module.css";
 
 const ETIQUETA_ESTADO: Record<PotreroResumen["estado"], string> = {
@@ -24,15 +25,16 @@ interface EstadoDetalle {
 /** Detalle e historial de un potrero (§9 y §16): compara la biomasa que
  * estima el modelo con las lecturas NDVI del satélite y los eventos reales
  * de manejo — la base de confianza del ganadero en las sugerencias. */
-export default function PaginaDetallePotrero() {
+function PaginaDetallePotreroInterna() {
   const params = useParams<{ id: string }>();
   const potreroId = params.id;
+  const { fincaId } = useFincaActual();
   const [datos, setDatos] = useState<EstadoDetalle | null>(null);
 
   useEffect(() => {
-    if (!potreroId) return;
+    if (!potreroId || !fincaId) return;
     let activo = true;
-    Promise.all([obtenerHistorial(potreroId), obtenerPotreros()]).then(
+    Promise.all([obtenerHistorial(potreroId), obtenerPotreros(fincaId)]).then(
       ([historial, potreros]) => {
         if (!activo) return;
         setDatos({
@@ -45,13 +47,12 @@ export default function PaginaDetallePotrero() {
     return () => {
       activo = false;
     };
-  }, [potreroId]);
+  }, [potreroId, fincaId]);
 
   const nombre = datos?.potrero?.nombre ?? potreroId;
 
   return (
-    <RequireAuth>
-      <section>
+    <section>
       <nav className={styles.migas} aria-label="Miga de pan">
         <Link href="/dashboard">← Volver al dashboard</Link>
       </nav>
@@ -93,9 +94,7 @@ export default function PaginaDetallePotrero() {
               <span className={styles.chip}>
                 Días en estado
                 <strong>
-                  {datos.potrero.dias_en_estado === null
-                    ? "—"
-                    : datos.potrero.dias_en_estado}
+                  {datos.potrero.dias_en_estado === null ? "—" : datos.potrero.dias_en_estado}
                 </strong>
               </span>
             </div>
@@ -116,7 +115,14 @@ export default function PaginaDetallePotrero() {
           </div>
         </>
       )}
-      </section>
+    </section>
+  );
+}
+
+export default function PaginaDetallePotrero() {
+  return (
+    <RequireAuth>
+      <PaginaDetallePotreroInterna />
     </RequireAuth>
   );
 }

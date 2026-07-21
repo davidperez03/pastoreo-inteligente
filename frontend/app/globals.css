@@ -1,29 +1,195 @@
+/* Sistema de diseño SRP — paleta agrícola (verdes/tierra), soporta claro y
+ * oscuro. Todo el resto del CSS del proyecto se construye sobre estas
+ * variables: nunca hardcodear un color fuera de aquí. */
+
+:root {
+  --verde-50: #f2f8ef;
+  --verde-100: #e0eed9;
+  --verde-200: #c2ddb4;
+  --verde-300: #9cc684;
+  --verde-400: #74ab59;
+  --verde-500: #55903d;
+  --verde-600: #41732e;
+  --verde-700: #345c26;
+  --verde-800: #2b4a21;
+  --verde-900: #1f3618;
+
+  --tierra-100: #f3ede4;
+  --tierra-300: #d9c4a3;
+  --tierra-500: #a9803f;
+
+  --ambar-100: #fdf1d6;
+  --ambar-500: #d99a1f;
+  --ambar-700: #92650c;
+
+  --rojo-100: #fde3e1;
+  --rojo-500: #d6493a;
+  --rojo-700: #a3291d;
+
+  --azul-500: #3a7fbf;
+
+  --gris-0: #ffffff;
+  --gris-50: #f7f8f6;
+  --gris-100: #eef0ec;
+  --gris-200: #dde1d9;
+  --gris-300: #c2c8bd;
+  --gris-500: #7a8274;
+  --gris-700: #454e40;
+  --gris-800: #2c332a;
+  --gris-900: #1a1f18;
+
+  --fondo: var(--gris-50);
+  --superficie: var(--gris-0);
+  --borde: var(--gris-200);
+  --texto: var(--gris-900);
+  --texto-tenue: var(--gris-500);
+  --primario: var(--verde-600);
+  --primario-hover: var(--verde-700);
+  --primario-texto: #ffffff;
+  --enfoque: var(--verde-500);
+
+  --radio-sm: 6px;
+  --radio-md: 10px;
+  --radio-lg: 16px;
+  --sombra-sm: 0 1px 2px rgba(26, 31, 24, 0.06), 0 1px 1px rgba(26, 31, 24, 0.04);
+  --sombra-md: 0 4px 12px rgba(26, 31, 24, 0.08), 0 2px 4px rgba(26, 31, 24, 0.04);
+
+  --espacio-1: 0.25rem;
+  --espacio-2: 0.5rem;
+  --espacio-3: 0.75rem;
+  --espacio-4: 1rem;
+  --espacio-5: 1.5rem;
+  --espacio-6: 2rem;
+  --espacio-8: 3rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: var(--gris-900);
+    --superficie: #232922;
+    --borde: #3a4235;
+    --texto: #f0f2ed;
+    --texto-tenue: #a3ab9c;
+    --primario: var(--verde-400);
+    --primario-hover: var(--verde-300);
+    --primario-texto: #16210f;
+    --enfoque: var(--verde-300);
+  }
+}
+
 * {
   box-sizing: border-box;
+}
+html,
+body {
   margin: 0;
   padding: 0;
 }
-
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  color: #1a2b1a;
-  background: #fafcf8;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+  color: var(--texto);
+  background: var(--fondo);
+  font-size: 15px;
+  line-height: 1.5;
 }
-
-.nav {
-  display: flex;
-  gap: 1.5rem;
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid #dbe5d6;
-  background: #ffffff;
+h1,
+h2,
+h3 {
+  font-weight: 650;
+  line-height: 1.25;
+  color: var(--texto);
 }
-
-.nav a {
-  color: #2d5a27;
-  text-decoration: none;
-  font-weight: 500;
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 var(--espacio-2);
+}
+h2 {
+  font-size: 1.15rem;
+  margin: 0 0 var(--espacio-3);
+}
+p {
+  margin: 0 0 var(--espacio-3);
+  color: var(--texto);
+}
+a {
+  color: var(--primario);
+}
+label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--texto-tenue);
+  display: block;
+  margin-bottom: var(--espacio-1);
+}
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  padding: 0.5rem 0.65rem;
+  width: 100%;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--enfoque);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+button {
+  font: inherit;
 }
 
 main {
-  padding: 1.5rem;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--espacio-6) var(--espacio-5) var(--espacio-8);
+}
+
+/* ---- Layout de la app (nav) ---- */
+.appNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  padding: var(--espacio-3) var(--espacio-5);
+  border-bottom: 1px solid var(--borde);
+  background: var(--superficie);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.appNav__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  font-weight: 750;
+  color: var(--primario);
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+.appNav__links {
+  display: flex;
+  gap: var(--espacio-1);
+  align-items: center;
+}
+.appNav__links a {
+  color: var(--texto-tenue);
+  text-decoration: none;
+  font-weight: 550;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radio-sm);
+}
+.appNav__links a:hover {
+  background: var(--verde-50);
+  color: var(--primario);
 }

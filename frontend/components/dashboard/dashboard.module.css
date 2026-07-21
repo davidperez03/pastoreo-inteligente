@@ -1,38 +1,38 @@
-/* Estilos del dashboard (Unidad 10). Sin tocar globals.css.
- * Colores de estado (semáforo): verde=listo, ámbar=descanso, rojo=ocupado.
- * El estado nunca se comunica solo por color: siempre lleva etiqueta de texto. */
+/* Estilos del dashboard. Colores de estado (semáforo): verde=listo,
+ * ámbar=descanso, rojo=ocupado. El estado nunca se comunica solo por color:
+ * siempre lleva etiqueta de texto. */
 
 .bandaMock {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #e6cf8a;
-  border-left: 4px solid #fab219;
-  border-radius: 6px;
-  background: #fdf6e3;
-  color: #6b5310;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--ambar-500);
+  border-left: 4px solid var(--ambar-500);
+  border-radius: var(--radio-md);
+  background: var(--ambar-100);
+  color: var(--ambar-700);
   font-size: 0.875rem;
 }
 
 .seccion {
-  margin-top: 2rem;
+  margin-top: 2.5rem;
 }
 
 .seccion h2 {
   font-size: 1.1rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.9rem;
 }
 
 .subtitulo {
-  color: #52514e;
+  color: var(--texto-tenue);
   font-size: 0.9rem;
-  margin-top: 0.25rem;
+  margin-top: -0.75rem;
 }
 
 .cargando {
-  color: #898781;
+  color: var(--texto-tenue);
   padding: 1rem 0;
 }
 
@@ -46,30 +46,34 @@
 
 .tarjeta {
   display: block;
-  border: 1px solid #dbe5d6;
-  border-left-width: 5px;
-  border-radius: 8px;
-  background: #ffffff;
-  padding: 0.85rem 1rem;
+  border: 1px solid var(--borde);
+  border-left-width: 4px;
+  border-radius: var(--radio-lg);
+  background: var(--superficie);
+  padding: 1rem 1.1rem;
   text-decoration: none;
   color: inherit;
-  transition: box-shadow 120ms ease;
+  box-shadow: var(--sombra-sm);
+  transition:
+    box-shadow 120ms ease,
+    transform 120ms ease;
 }
 
 .tarjeta:hover {
-  box-shadow: 0 2px 8px rgba(26, 43, 26, 0.12);
+  box-shadow: var(--sombra-md);
+  transform: translateY(-1px);
 }
 
 .tarjetaListo {
-  border-left-color: #0ca30c;
+  border-left-color: var(--verde-600);
 }
 
 .tarjetaDescanso {
-  border-left-color: #fab219;
+  border-left-color: var(--ambar-500);
 }
 
 .tarjetaOcupado {
-  border-left-color: #d03b3b;
+  border-left-color: var(--rojo-500);
 }
 
 .tarjetaCabecera {
@@ -77,45 +81,47 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .tarjetaNombre {
-  font-weight: 600;
+  font-weight: 650;
 }
 
 .insignia {
   font-size: 0.72rem;
-  font-weight: 600;
-  padding: 0.15rem 0.5rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
   border-radius: 999px;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .insigniaListo {
-  background: #e3f4e3;
-  color: #075c07;
+  background: var(--verde-100);
+  color: var(--verde-800);
 }
 
 .insigniaDescanso {
-  background: #fdf1d4;
-  color: #6b5310;
+  background: var(--ambar-100);
+  color: var(--ambar-700);
 }
 
 .insigniaOcupado {
-  background: #fbe4e4;
-  color: #8c2323;
+  background: var(--rojo-100);
+  color: var(--rojo-700);
 }
 
 .tarjetaDatos {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.25rem 0.75rem;
+  gap: 0.35rem 0.75rem;
   font-size: 0.82rem;
 }
 
 .dato dt {
-  color: #898781;
+  color: var(--texto-tenue);
   font-size: 0.72rem;
 }
 
@@ -129,25 +135,28 @@
 .tabla {
   width: 100%;
   border-collapse: collapse;
-  background: #ffffff;
-  border: 1px solid #dbe5d6;
-  border-radius: 8px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
   overflow: hidden;
   font-size: 0.875rem;
+  box-shadow: var(--sombra-sm);
 }
 
 .tabla th {
   text-align: left;
   font-size: 0.75rem;
-  color: #52514e;
-  padding: 0.55rem 0.85rem;
-  border-bottom: 1px solid #dbe5d6;
-  background: #f4f8f2;
+  color: var(--texto-tenue);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--borde);
+  background: var(--verde-50);
 }
 
 .tabla td {
-  padding: 0.55rem 0.85rem;
-  border-bottom: 1px solid #eef3ec;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--borde);
 }
 
 .tabla tr:last-child td {
@@ -168,12 +177,12 @@
 }
 
 .flecha {
-  color: #898781;
+  color: var(--texto-tenue);
   padding: 0 0.35rem;
 }
 
 .vacio {
-  color: #898781;
+  color: var(--texto-tenue);
   font-size: 0.875rem;
   padding: 0.5rem 0;
 }
@@ -182,39 +191,43 @@
 
 .migas {
   font-size: 0.85rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .migas a {
-  color: #2d5a27;
+  color: var(--primario);
+  text-decoration: none;
 }
 
 .fichaPotrero {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin: 0.75rem 0 1.25rem;
+  margin: 0.75rem 0 1.5rem;
 }
 
 .chip {
-  border: 1px solid #dbe5d6;
-  border-radius: 8px;
-  background: #ffffff;
-  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-md);
+  background: var(--superficie);
+  padding: 0.5rem 0.85rem;
   font-size: 0.82rem;
+  box-shadow: var(--sombra-sm);
 }
 
 .chip strong {
   display: block;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-variant-numeric: tabular-nums;
+  color: var(--texto);
 }
 
 .panelGrafico {
-  border: 1px solid #dbe5d6;
-  border-radius: 8px;
-  background: #fcfcfb;
-  padding: 1rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  background: var(--superficie);
+  padding: 1.25rem;
+  box-shadow: var(--sombra-sm);
 }
 
 .leyenda {
@@ -222,7 +235,7 @@
   flex-wrap: wrap;
   gap: 1.25rem;
   font-size: 0.8rem;
-  color: #52514e;
+  color: var(--texto-tenue);
   margin-bottom: 0.6rem;
 }
 
@@ -241,7 +254,7 @@
 .explicacion {
   margin-top: 1rem;
   font-size: 0.875rem;
-  color: #52514e;
+  color: var(--texto-tenue);
   line-height: 1.5;
   max-width: 62ch;
 }

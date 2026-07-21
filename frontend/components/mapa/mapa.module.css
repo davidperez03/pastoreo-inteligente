@@ -1,15 +1,15 @@
 .mapa {
   height: 420px;
   width: 100%;
-  border: 1px solid #dbe5d6;
-  border-radius: 8px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
   z-index: 0;
 }
 
 /* Icono de vértice arrastrable (divIcon de Leaflet). */
 .vertice {
-  background: #ffffff;
-  border: 3px solid #2d7a27;
+  background: var(--gris-0);
+  border: 3px solid var(--verde-700);
   border-radius: 50%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   cursor: grab;
@@ -17,34 +17,34 @@
 
 .contenedor {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
   max-width: 900px;
 }
 
 .tabs {
   display: flex;
   gap: 0.5rem;
-  border-bottom: 2px solid #dbe5d6;
+  border-bottom: 2px solid var(--borde);
   padding-bottom: 0.5rem;
 }
 
 .tab {
-  padding: 0.35rem 0.9rem;
-  border: 1px solid #dbe5d6;
-  border-radius: 6px;
-  background: #ffffff;
-  color: #2d5a27;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  background: var(--superficie);
+  color: var(--primario);
   text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
+  font-weight: 550;
+  font-size: 0.9rem;
   cursor: pointer;
 }
 
 .tabActiva {
   composes: tab;
-  background: #2d5a27;
-  border-color: #2d5a27;
-  color: #ffffff;
+  background: var(--primario);
+  border-color: var(--primario);
+  color: var(--primario-texto);
 }
 
 .botonera {
@@ -54,12 +54,12 @@
 }
 
 .boton {
-  padding: 0.4rem 0.9rem;
-  border: 1px solid #2d5a27;
-  border-radius: 6px;
-  background: #ffffff;
-  color: #2d5a27;
-  font-weight: 500;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--primario);
+  border-radius: var(--radio-sm);
+  background: var(--superficie);
+  color: var(--primario);
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -70,29 +70,25 @@
 
 .botonPrimario {
   composes: boton;
-  background: #2d5a27;
-  color: #ffffff;
+  background: var(--primario);
+  color: var(--primario-texto);
 }
 
 .area {
   font-size: 1.05rem;
-  font-weight: 600;
-  color: #1a2b1a;
+  font-weight: 650;
+  color: var(--texto);
 }
 
 .ayuda {
-  color: #5a6b56;
+  color: var(--texto-tenue);
   font-size: 0.9rem;
 }
 
 .formulario {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.1rem;
   max-width: 480px;
-  padding: 1rem;
-  border: 1px solid #dbe5d6;
-  border-radius: 8px;
-  background: #ffffff;
 }
 
 .campo {
@@ -105,11 +101,13 @@
 .campo input,
 .campo select,
 .campo textarea {
-  padding: 0.4rem 0.5rem;
-  border: 1px solid #c6d2c0;
-  border-radius: 6px;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
   font: inherit;
   font-weight: 400;
+  background: var(--superficie);
+  color: var(--texto);
 }
 
 .textareaCoordenadas {
@@ -120,24 +118,24 @@
 
 .exito {
   padding: 0.6rem 0.8rem;
-  border: 1px solid #9ac48f;
-  border-radius: 6px;
-  background: #eef7ea;
-  color: #1e4d18;
+  border: 1px solid var(--verde-300);
+  border-radius: var(--radio-sm);
+  background: var(--verde-50);
+  color: var(--verde-800);
 }
 
 .error {
   padding: 0.6rem 0.8rem;
-  border: 1px solid #d9a0a0;
-  border-radius: 6px;
-  background: #fbeeee;
-  color: #7a1f1f;
+  border: 1px solid var(--rojo-500);
+  border-radius: var(--radio-sm);
+  background: var(--rojo-100);
+  color: var(--rojo-700);
 }
 
 .advertencia {
   padding: 0.6rem 0.8rem;
-  border: 1px solid #d9c98a;
-  border-radius: 6px;
-  background: #fbf6e4;
-  color: #6b5a10;
+  border: 1px solid var(--ambar-500);
+  border-radius: var(--radio-sm);
+  background: var(--ambar-100);
+  color: var(--ambar-700);
 }

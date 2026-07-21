@@ -13,6 +13,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from srp.agronomia.infrastructure.api.router import router as especies_router
 from srp.calibracion.application.handler import CalibrarPotreroAlSalirLote
 from srp.calibracion.infrastructure.repositorio_sistema import (
     RepositorioCalibracionSistema,
@@ -24,6 +25,7 @@ from srp.gestion_potreros.infrastructure.adapters.estado_potrero_handler import 
     EstadoPotreroHandler,
 )
 from srp.gestion_potreros.infrastructure.api.router import router as potreros_router
+from srp.organizaciones.infrastructure.api.router import router as fincas_router
 from srp.rotacion.infrastructure.api.router import router as rotacion_router
 from srp.shared.db import crear_pool
 from srp.shared.events import BusEventosEnMemoria
@@ -75,6 +77,8 @@ def create_app() -> FastAPI:
     async def health() -> dict:
         return {"status": "ok"}
 
+    app.include_router(fincas_router)
+    app.include_router(especies_router)
     app.include_router(potreros_router)
     app.include_router(ganado_router)
     app.include_router(rotacion_router)

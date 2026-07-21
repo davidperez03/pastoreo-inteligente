@@ -12,6 +12,9 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import Boton from "@/components/ui/Boton";
+import { Campo } from "@/components/ui/Campo";
+import Tarjeta from "@/components/ui/Tarjeta";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
@@ -64,41 +67,40 @@ function FormularioLogin() {
   }
 
   return (
-    <section style={{ maxWidth: "24rem", margin: "3rem auto" }}>
-      <h1>Iniciar sesión</h1>
-      <p>Sistema de Rotación de Pastos — acceso para ganaderos y administradores.</p>
-      <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", marginTop: "1.5rem" }}>
-        <label>
-          Correo
-          <input
+    <section style={{ maxWidth: "24rem", margin: "4rem auto" }}>
+      <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+        <div style={{ fontSize: "2rem" }}>🌱</div>
+        <h1>Sistema de Rotación de Pastos</h1>
+        <p style={{ color: "var(--texto-tenue)" }}>Acceso para ganaderos y administradores</p>
+      </div>
+      <Tarjeta>
+        <form onSubmit={enviar}>
+          <Campo
+            etiqueta="Correo"
             type="email"
             required
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ display: "block", width: "100%" }}
           />
-        </label>
-        <label>
-          Contraseña
-          <input
+          <Campo
+            etiqueta="Contraseña"
             type="password"
             required
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ display: "block", width: "100%" }}
           />
-        </label>
-        {error && (
-          <p role="alert" style={{ color: "#b91c1c" }}>
-            {error}
-          </p>
-        )}
-        <button type="submit" disabled={enviando}>
-          {enviando ? "Entrando…" : "Entrar"}
-        </button>
-      </form>
+          {error && (
+            <p role="alert" className="campoError" style={{ color: "var(--rojo-700)", marginBottom: "1rem" }}>
+              {error}
+            </p>
+          )}
+          <Boton type="submit" cargando={enviando} style={{ width: "100%" }}>
+            Entrar
+          </Boton>
+        </form>
+      </Tarjeta>
     </section>
   );
 }

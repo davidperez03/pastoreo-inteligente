@@ -51,3 +51,39 @@ async def organizacion(pool):
 @pytest.fixture
 def bus() -> BusEventosEnMemoria:
     return BusEventosEnMemoria()
+
+
+ROL_SIN_BYPASS = "srp_test_app"
+
+
+@pytest.fixture
+async def pool_sin_bypass(pool):
+    """Pool conectado con un rol SIN BYPASSRLS, para tests que deben probar
+    aislamiento multi-tenant de verdad.
+
+    El fixture `pool` normal conecta como `srp` (owner del docker-compose
+    local), que es superusuario y bypasea la RLS igual que el rol admin de
+    Supabase — cualquier test que use `pool` para verificar "esta
+    organización no ve datos de otra" pasaría aunque la política RLS
+    estuviera rota. Este rol es el equivalente local de `srp_app`
+    (scripts/crear_rol_app.py en Supabase): mismos privilegios de datos,
+    sin bypass.
+    """
+    await pool.execute(f"""
+        DO $$
+        BEGIN
+          IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '{ROL_SIN_BYPASS}') THEN
+            CREATE ROLE {ROL_SIN_BYPASS} WITH LOGIN PASSWORD 'test'
+              NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE;
+          END IF;
+        END
+        $$;
+        GRANT USAGE ON SCHEMA public TO {ROL_SIN_BYPASS};
+        GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO {ROL_SIN_BYPASS};
+        GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO {ROL_SIN_BYPASS};
+    """)
+    dsn_base = _database_url().rsplit("@", 1)[-1]
+    dsn = f"postgresql://{ROL_SIN_BYPASS}:test@{dsn_base}"
+    pool_restringido = await asyncpg.create_pool(dsn)
+    yield pool_restringido
+    await pool_restringido.close()

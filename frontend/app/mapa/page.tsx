@@ -13,6 +13,7 @@ import RequireAuth from "@/components/auth/RequireAuth";
 import AreaEnVivo from "@/components/mapa/AreaEnVivo";
 import FormularioPotrero from "@/components/mapa/FormularioPotrero";
 import type { PuntoLatLng } from "@/components/mapa/tipos";
+import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import styles from "@/components/mapa/mapa.module.css";
 
 const MapaPotreros = dynamic(() => import("@/components/mapa/MapaPotreros"), {
@@ -41,7 +42,10 @@ export default function PaginaMapa() {
   return (
     <RequireAuth>
       <section className={styles.contenedor}>
-        <h1>Potreros — dibujar en el mapa</h1>
+        <EncabezadoPagina
+          titulo="Potreros"
+          descripcion="Dibuja el polígono del potrero en el mapa; el área en hectáreas se calcula en vivo antes de enviar nada al servidor."
+        />
         <div className={styles.tabs}>
           <span className={styles.tabActiva}>Dibujar en el mapa</span>
           <Link href="/mapa/importar" className={styles.tab}>

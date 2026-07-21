@@ -16,7 +16,6 @@ from srp.calibracion.application.handler import (
     registrar_en_bus,
 )
 from srp.calibracion.domain.events import LoteSalioDePotrero
-from srp.shared.events import BusEventosEnMemoria
 from srp.shared.types import PotreroId
 
 

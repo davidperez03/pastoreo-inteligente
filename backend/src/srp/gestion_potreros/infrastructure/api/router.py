@@ -36,8 +36,8 @@ from srp.gestion_potreros.infrastructure.adapters.postgres_potrero_repository im
 )
 from srp.gestion_potreros.infrastructure.adapters.shapely_geometria_validator import (
     GeometriaInvalida,
-    ShapelyGeometriaValidator,
 )
+from srp.planimetria.validator import PlanimetriaGeometriaValidator
 from srp.shared.auth import UsuarioActual, get_current_user
 from srp.shared.events import BusEventosEnMemoria
 from srp.shared.types import FincaId, PotreroId
@@ -130,7 +130,9 @@ async def crear_potrero(
         raise HTTPException(422, "Debe enviarse exactamente uno de: puntos | geojson")
 
     repo = _repo(request, user)
-    validador = ShapelyGeometriaValidator()
+    # Adaptador completo del paquete planimetría (§3): mismo puerto del kernel
+    # que el ShapelyGeometriaValidator mínimo, con parsers y validaciones extra.
+    validador = PlanimetriaGeometriaValidator()
     bus = _bus(request)
     try:
         if body.puntos is not None:

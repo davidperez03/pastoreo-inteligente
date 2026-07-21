@@ -39,6 +39,7 @@ export default function SugerenciasRotacion({
         <tr>
           <th>Movimiento sugerido</th>
           <th>Fecha estimada</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -52,6 +53,11 @@ export default function SugerenciasRotacion({
               {nombrePotrero.get(s.potrero_id) ?? s.potrero_id}
             </td>
             <td>{formatearFecha(s.fecha)}</td>
+            <td>
+              <a href="/ganado" style={{ fontSize: "0.85rem", whiteSpace: "nowrap" }}>
+                Registrar en Ganado →
+              </a>
+            </td>
           </tr>
         ))}
       </tbody>

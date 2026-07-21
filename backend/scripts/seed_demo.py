@@ -24,12 +24,20 @@ from srp.shared.db import database_url
 ORG_ID = uuid.UUID("11111111-1111-1111-1111-111111111111")
 FINCA_ID = uuid.UUID("22222222-2222-2222-2222-222222222222")
 
-# (nombre, estado, offset_lng, offset_lat, tipo_suelo, biomasa_base)
+# (nombre, estado, offset_lng, offset_lat, tipo_suelo, biomasa_base, dias_desde_salida)
+#
+# dias_desde_salida importa de verdad: el motor de rotación (§7) solo
+# considera candidato a un potrero cuando ese número supera el
+# dias_descanso_ideal de la especie sembrada (ver más abajo). Con todos los
+# potreros a 10 días (como estaba antes) NINGUNO pasa el umbral — el motor
+# nunca tiene con qué sugerir nada y el demo se ve "roto" sin serlo. "Mata de
+# Monte" queda con descanso cumplido a propósito, para que el camino feliz
+# (sugerencia real, no solo advertencias) también sea visible desde el demo.
 POTREROS = [
-    ("La Ceiba", "ocupado", 0.000, 0.000, "franco", 900.0),
-    ("El Samán", "descanso", 0.006, 0.000, "arcilloso", 1800.0),
-    ("Mata de Monte", "listo", 0.000, 0.006, "franco", 2900.0),
-    ("Caño Seco", "descanso", 0.006, 0.006, "arenoso", 1200.0),
+    ("La Ceiba", "ocupado", 0.000, 0.000, "franco", 900.0, 0),
+    ("El Samán", "descanso", 0.006, 0.000, "arcilloso", 1800.0, 12),
+    ("Mata de Monte", "listo", 0.000, 0.006, "franco", 2900.0, 35),
+    ("Caño Seco", "descanso", 0.006, 0.006, "arenoso", 1200.0, 8),
 ]
 LADO = 0.004  # ~440 m de lado ≈ 19-20 ha por potrero
 
@@ -77,7 +85,7 @@ async def main() -> None:
         base_lng, base_lat = -72.40, 5.33
         potrero_ids: dict[str, uuid.UUID] = {}
 
-        for nombre, estado, dlng, dlat, suelo, biomasa in POTREROS:
+        for nombre, estado, dlng, dlat, suelo, biomasa, dias_desde_salida in POTREROS:
             pid = uuid.uuid4()
             potrero_ids[nombre] = pid
             geom = _cuadrado(base_lng + dlng, base_lat + dlat)
@@ -99,7 +107,7 @@ async def main() -> None:
                 estado,
                 nombre in ("El Samán", "Mata de Monte"),
                 biomasa,
-                date.today() - timedelta(days=10),
+                date.today() - timedelta(days=dias_desde_salida),
             )
             # Historial sintético de 20 días: crecimiento + un par de lecturas NDVI.
             for i in range(20, 0, -1):

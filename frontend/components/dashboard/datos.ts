@@ -8,6 +8,7 @@
 
 import { api } from "@/lib/api";
 import type {
+  EstadoPotrero,
   LoteResumen,
   PotreroResumen,
   PuntoHistorial,
@@ -183,14 +184,61 @@ function historialMock(potreroId: string): PuntoHistorial[] {
 }
 
 // ---------------------------------------------------------------------------
+// Traducción del contrato del backend (nombres/formas propios del dominio,
+// §2/§9) a los tipos que consume la UI — mismo lugar que ya resuelve el
+// fallback a mocks, es la frontera natural para esto.
+// ---------------------------------------------------------------------------
+
+/** Forma real de GET /fincas/{finca_id}/potreros (ver PotreroResponse en
+ * gestion_potreros/infrastructure/api/router.py). */
+interface PotreroApi {
+  id: string;
+  nombre: string;
+  area_ha: number;
+  estado: EstadoPotrero;
+  factor_fatiga: number;
+  biomasa_actual_kg_ms_ha: number | null;
+  fecha_ultima_salida: string | null;
+}
+
+function diasDesde(fechaIso: string): number {
+  const ms = Date.now() - new Date(`${fechaIso}T00:00:00`).getTime();
+  return Math.max(0, Math.floor(ms / 86_400_000));
+}
+
+function mapearPotrero(p: PotreroApi): PotreroResumen {
+  return {
+    id: p.id,
+    nombre: p.nombre,
+    area_ha: p.area_ha,
+    estado: p.estado,
+    biomasa_kg_ms_ha: p.biomasa_actual_kg_ms_ha,
+    factor_fatiga: p.factor_fatiga,
+    dias_en_estado: p.fecha_ultima_salida === null ? null : diasDesde(p.fecha_ultima_salida),
+  };
+}
+
+/** Forma real de GET /fincas/{finca_id}/rotacion/sugerir: un objeto con el
+ * calendario, no un array de movimientos directamente. */
+interface RotacionApi {
+  finca_id: string;
+  horizonte_dias: number;
+  movimientos: SugerenciaRotacion[];
+  advertencias: string[];
+}
+
+// ---------------------------------------------------------------------------
 // API pública de la capa de datos
 // ---------------------------------------------------------------------------
 
-export function obtenerPotreros(
+export async function obtenerPotreros(
   fincaId: string = FINCA_DEMO_ID,
 ): Promise<ResultadoDatos<PotreroResumen[]>> {
   return conFallback(
-    () => api.get<PotreroResumen[]>(`/fincas/${fincaId}/potreros`),
+    async () => {
+      const crudos = await api.get<PotreroApi[]>(`/fincas/${fincaId}/potreros`);
+      return crudos.map(mapearPotrero);
+    },
     () => POTREROS_MOCK,
   );
 }
@@ -217,7 +265,12 @@ export function obtenerSugerencias(
   fincaId: string = FINCA_DEMO_ID,
 ): Promise<ResultadoDatos<SugerenciaRotacion[]>> {
   return conFallback(
-    () => api.get<SugerenciaRotacion[]>(`/fincas/${fincaId}/rotacion/sugerir`),
+    async () => {
+      const calendario = await api.get<RotacionApi>(
+        `/fincas/${fincaId}/rotacion/sugerir`,
+      );
+      return calendario.movimientos;
+    },
     sugerenciasMock,
   );
 }

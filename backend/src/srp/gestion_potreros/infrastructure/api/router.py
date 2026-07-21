@@ -10,6 +10,7 @@ sale del token JWT (`get_current_user`) y se propaga a la RLS vía
 from __future__ import annotations
 
 import uuid
+from datetime import date
 
 import asyncpg
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -73,6 +74,8 @@ class PotreroResponse(BaseModel):
     factor_fatiga: float
     metodo_levantamiento: str
     accuracy_m: float | None
+    fecha_ultima_salida: date | None
+    biomasa_actual_kg_ms_ha: float | None
     geojson: dict
     advertencia: str | None = None
 
@@ -90,6 +93,8 @@ class PotreroResponse(BaseModel):
             factor_fatiga=dto.factor_fatiga,
             metodo_levantamiento=dto.metodo_levantamiento,
             accuracy_m=dto.accuracy_m,
+            fecha_ultima_salida=dto.fecha_ultima_salida,
+            biomasa_actual_kg_ms_ha=dto.biomasa_actual_kg_ms_ha,
             geojson=dto.geojson,
             advertencia=dto.advertencia,
         )

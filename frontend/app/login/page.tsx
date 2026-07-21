@@ -11,7 +11,7 @@
  */
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
@@ -34,8 +34,15 @@ function FormularioLogin() {
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // La redirección va en un efecto, no en el cuerpo del render: llamar
+  // router.replace() durante el render de este componente actualiza el
+  // estado del Router mientras FormularioLogin todavía se está renderizando
+  // ("Cannot update a component while rendering a different component").
+  useEffect(() => {
+    if (user) router.replace(siguiente);
+  }, [user, siguiente, router]);
+
   if (user) {
-    router.replace(siguiente);
     return null;
   }
 

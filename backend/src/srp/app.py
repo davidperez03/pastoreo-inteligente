@@ -15,6 +15,7 @@ from srp.calibracion.application.handler import CalibrarPotreroAlSalirLote
 from srp.calibracion.infrastructure.repositorio_sistema import (
     RepositorioCalibracionSistema,
 )
+from srp.consultas.api.router import router as consultas_router
 from srp.ganado.domain.events import LoteEntroAPotrero, LoteSalioDePotrero
 from srp.ganado.infrastructure.api.router import router as ganado_router
 from srp.gestion_potreros.infrastructure.adapters.estado_potrero_handler import (
@@ -61,4 +62,5 @@ def create_app() -> FastAPI:
     app.include_router(potreros_router)
     app.include_router(ganado_router)
     app.include_router(rotacion_router)
+    app.include_router(consultas_router)
     return app

@@ -213,7 +213,45 @@ def normalizar_entrada(archivo_o_texto, formato: FormatoEntrada) -> list[tuple[f
 
 ### 3.3 Validación y construcción del polígono
 
+> **Corrección de implementación (post-v3):** la primera versión de este
+> documento asumía que un umbral de plausibilidad sobre el área (0.05–5000 ha)
+> bastaba para atrapar el error más común de usuario — invertir lat/lng. Es
+> falso para Colombia: un polígono con lat/lng invertidas cae en el océano
+> Antártico, donde EPSG:9377 sigue devolviendo un área finita y "plausible"
+> (ej. un cuadrado de Casanare invertido midió ~6.6 ha, dentro del rango). El
+> chequeo real que atrapa el caso es si el polígono cae **fuera del área de
+> validez de EPSG:9377** (`CRS("EPSG:9377").area_of_use`, que cubre
+> Colombia) — ahí la proyección produce números finitos pero sin sentido. El
+> umbral de área se mantiene como señal complementaria (atrapa otros errores
+> de digitación), no como el chequeo principal.
+
 ```python
+from functools import lru_cache
+from pyproj import CRS
+
+AREA_MINIMA_PLAUSIBLE_HA = 0.05
+AREA_MAXIMA_PLAUSIBLE_HA = 5000
+
+
+@lru_cache(maxsize=1)
+def _area_de_uso_epsg9377() -> tuple[float, float, float, float]:
+    """(west, south, east, north) del área de validez de EPSG:9377 (Colombia)."""
+    a = CRS("EPSG:9377").area_of_use
+    return (a.west, a.south, a.east, a.north)
+
+
+def _fuera_de_colombia(poligono) -> bool:
+    """True si el polígono cae fuera del área de validez de MAGNA-SIRGAS.
+
+    Fuera de ella la proyección devuelve números finitos pero sin sentido: es
+    el síntoma real de lat/lng invertidas, ej. (5.34, -72.4) se convierte en
+    un punto en el océano Antártico (lng 5.34, lat -72.4) — y el área ahí
+    puede caer dentro de cualquier rango "plausible" por coincidencia."""
+    west, south, east, north = _area_de_uso_epsg9377()
+    min_lng, min_lat, max_lng, max_lat = poligono.bounds
+    return min_lng < west or max_lng > east or min_lat < south or max_lat > north
+
+
 def construir_poligono_validado(puntos: list[tuple[float, float]]) -> dict:
     if len(puntos) < 3:
         raise ValueError("Se necesitan minimo 3 puntos")
@@ -229,10 +267,17 @@ def construir_poligono_validado(puntos: list[tuple[float, float]]) -> dict:
         advertencia = f"Poligono corregido automaticamente: {razon}"
 
     area_ha = calcular_area_geodesica(poligono) / 10000
-    if area_ha < 0.05 or area_ha > 5000:
-        # umbral de plausibilidad: atrapa el error mas comun del usuario final,
-        # invertir lat/lng, que produce un poligono "valido" pero absurdo.
-        advertencia = (advertencia or "") + f" Area calculada ({area_ha:.2f} ha) fuera de rango plausible"
+    if (
+        area_ha < AREA_MINIMA_PLAUSIBLE_HA
+        or area_ha > AREA_MAXIMA_PLAUSIBLE_HA
+        or _fuera_de_colombia(poligono)
+    ):
+        aviso = (
+            f"Area calculada ({area_ha:.2f} ha) fuera de rango plausible o "
+            "poligono fuera del area de validez de MAGNA-SIRGAS (Colombia); "
+            "¿lat/lng invertidas?"
+        )
+        advertencia = f"{advertencia} {aviso}" if advertencia else aviso
 
     return {
         "geojson": poligono.__geo_interface__,

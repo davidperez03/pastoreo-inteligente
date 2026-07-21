@@ -27,6 +27,14 @@ export default function FilaLote({
 
   const potreroActual = potreros.find((p) => p.id === lote.potrero_actual_id);
   const disponibles = potreros.filter((p) => p.estado !== "ocupado");
+  // Referencia (no reemplazo) para quien está midiendo en campo: el potrero
+  // de salida es siempre el actual; el de entrada es el que se va eligiendo
+  // en el select. Usar este número tal cual sería circular para la
+  // calibración (§8) — el sistema no puede corregirse con su propia
+  // predicción — pero ayuda a saber qué espera el modelo.
+  const potreroReferencia = lote.potrero_actual_id
+    ? potreroActual
+    : potreros.find((p) => p.id === potreroId);
 
   async function confirmar() {
     setEnviando(true);
@@ -91,13 +99,22 @@ export default function FilaLote({
               ))}
             </select>
           )}
-          <input
-            type="number"
-            min={0}
-            placeholder={lote.potrero_actual_id ? "Biomasa final (opcional)" : "Biomasa inicial (opcional)"}
-            value={biomasa}
-            onChange={(e) => setBiomasa(e.target.value)}
-          />
+          <div>
+            <input
+              type="number"
+              min={0}
+              placeholder={lote.potrero_actual_id ? "Biomasa final (opcional)" : "Biomasa inicial (opcional)"}
+              value={biomasa}
+              onChange={(e) => setBiomasa(e.target.value)}
+            />
+            <p style={{ fontSize: "0.75rem", color: "var(--texto-tenue)", margin: "0.2rem 0 0" }}>
+              kg MS/ha, medido en campo (disco de pastura o corte y pesaje) — mejor que
+              un dato de ojo.{" "}
+              {potreroReferencia?.biomasa_actual_kg_ms_ha != null && (
+                <>El modelo estima ahora mismo {Math.round(potreroReferencia.biomasa_actual_kg_ms_ha)} kg MS/ha.</>
+              )}
+            </p>
+          </div>
           <Boton onClick={confirmar} cargando={enviando}>
             Confirmar
           </Boton>

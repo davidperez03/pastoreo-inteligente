@@ -14,7 +14,17 @@ def database_url() -> str:
 
 
 async def crear_pool(dsn: str | None = None) -> asyncpg.Pool:
-    return await asyncpg.create_pool(dsn or database_url())
+    return await asyncpg.create_pool(
+        dsn or database_url(),
+        # "extensions" además del "$user", public por defecto: Supabase
+        # instala PostGIS ahí (no en public), y sin esto tipos como GEOGRAPHY
+        # no resuelven para un rol no-owner. Se pasa como parámetro de
+        # arranque de conexión (no ALTER ROLE) porque el pooler de sesión de
+        # Supabase no aplicaba de forma confiable el search_path configurado
+        # a nivel de rol al proxear la conexión. Un esquema "extensions"
+        # inexistente (Postgres local) se ignora sin error.
+        server_settings={"search_path": '"$user",public,extensions'},
+    )
 
 
 @asynccontextmanager

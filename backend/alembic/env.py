@@ -9,8 +9,13 @@ config = context.config
 
 def _url() -> str:
     url = os.environ.get("DATABASE_URL", "postgresql://srp:srp@localhost:5432/srp")
-    # alembic usa driver sync (psycopg); normalizamos el esquema del DSN
-    return url.replace("postgresql://", "postgresql+psycopg://")
+    # alembic usa driver sync (psycopg); normalizamos el esquema del DSN.
+    # Algunos proveedores (Supabase, Heroku) entregan "postgres://" en vez
+    # de "postgresql://" — ambos son válidos para libpq pero SQLAlchemy solo
+    # reconoce el segundo como prefijo a sustituir.
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url.removeprefix("postgres://")
+    return url.replace("postgresql://", "postgresql+psycopg://", 1)
 
 
 def run_migrations_offline() -> None:

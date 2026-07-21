@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import RequireAuth from "@/components/auth/RequireAuth";
 import GraficoHistorial from "@/components/dashboard/GraficoHistorial";
 import { obtenerHistorial, obtenerPotreros } from "@/components/dashboard/datos";
 import type { PotreroResumen, PuntoHistorial } from "@/components/dashboard/tipos";
@@ -49,7 +50,8 @@ export default function PaginaDetallePotrero() {
   const nombre = datos?.potrero?.nombre ?? potreroId;
 
   return (
-    <section>
+    <RequireAuth>
+      <section>
       <nav className={styles.migas} aria-label="Miga de pan">
         <Link href="/dashboard">← Volver al dashboard</Link>
       </nav>
@@ -114,6 +116,7 @@ export default function PaginaDetallePotrero() {
           </div>
         </>
       )}
-    </section>
+      </section>
+    </RequireAuth>
   );
 }

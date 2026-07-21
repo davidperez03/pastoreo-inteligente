@@ -9,6 +9,7 @@
 import { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import RequireAuth from "@/components/auth/RequireAuth";
 import AreaEnVivo from "@/components/mapa/AreaEnVivo";
 import FormularioPotrero from "@/components/mapa/FormularioPotrero";
 import type { PuntoLatLng } from "@/components/mapa/tipos";
@@ -38,23 +39,25 @@ export default function PaginaMapa() {
   }, []);
 
   return (
-    <section className={styles.contenedor}>
-      <h1>Potreros — dibujar en el mapa</h1>
-      <div className={styles.tabs}>
-        <span className={styles.tabActiva}>Dibujar en el mapa</span>
-        <Link href="/mapa/importar" className={styles.tab}>
-          Importar (coordenadas o archivo)
-        </Link>
-      </div>
-      <MapaPotreros
-        puntos={puntos}
-        onAgregarPunto={agregarPunto}
-        onMoverPunto={moverPunto}
-        onDeshacer={deshacer}
-        onLimpiar={limpiar}
-      />
-      <AreaEnVivo puntos={puntos} />
-      <FormularioPotrero puntos={puntos} />
-    </section>
+    <RequireAuth>
+      <section className={styles.contenedor}>
+        <h1>Potreros — dibujar en el mapa</h1>
+        <div className={styles.tabs}>
+          <span className={styles.tabActiva}>Dibujar en el mapa</span>
+          <Link href="/mapa/importar" className={styles.tab}>
+            Importar (coordenadas o archivo)
+          </Link>
+        </div>
+        <MapaPotreros
+          puntos={puntos}
+          onAgregarPunto={agregarPunto}
+          onMoverPunto={moverPunto}
+          onDeshacer={deshacer}
+          onLimpiar={limpiar}
+        />
+        <AreaEnVivo puntos={puntos} />
+        <FormularioPotrero puntos={puntos} />
+      </section>
+    </RequireAuth>
   );
 }

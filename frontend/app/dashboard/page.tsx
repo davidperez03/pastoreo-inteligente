@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import RequireAuth from "@/components/auth/RequireAuth";
 import SemaforoPotreros from "@/components/dashboard/SemaforoPotreros";
 import SugerenciasRotacion from "@/components/dashboard/SugerenciasRotacion";
 import TablaLotes from "@/components/dashboard/TablaLotes";
@@ -47,44 +48,46 @@ export default function PaginaDashboard() {
   }, []);
 
   return (
-    <section>
-      <h1>Dashboard de potreros</h1>
-      <p className={styles.subtitulo}>
-        Estado de cada potrero (semáforo), lotes de ganado y sugerencias de
-        rotación.
-      </p>
+    <RequireAuth>
+      <section>
+        <h1>Dashboard de potreros</h1>
+        <p className={styles.subtitulo}>
+          Estado de cada potrero (semáforo), lotes de ganado y sugerencias de
+          rotación.
+        </p>
 
-      {datos === null ? (
-        <p className={styles.cargando}>Cargando estado de la finca…</p>
-      ) : (
-        <>
-          {datos.esMock && (
-            <p className={styles.bandaMock} role="status">
-              Datos de demostración — no hay conexión con el backend. Las
-              cifras que se muestran son sintéticas.
-            </p>
-          )}
+        {datos === null ? (
+          <p className={styles.cargando}>Cargando estado de la finca…</p>
+        ) : (
+          <>
+            {datos.esMock && (
+              <p className={styles.bandaMock} role="status">
+                Datos de demostración — no hay conexión con el backend. Las
+                cifras que se muestran son sintéticas.
+              </p>
+            )}
 
-          <div className={styles.seccion}>
-            <h2>Potreros</h2>
-            <SemaforoPotreros potreros={datos.potreros} />
-          </div>
+            <div className={styles.seccion}>
+              <h2>Potreros</h2>
+              <SemaforoPotreros potreros={datos.potreros} />
+            </div>
 
-          <div className={styles.seccion}>
-            <h2>Lotes de ganado</h2>
-            <TablaLotes lotes={datos.lotes} potreros={datos.potreros} />
-          </div>
+            <div className={styles.seccion}>
+              <h2>Lotes de ganado</h2>
+              <TablaLotes lotes={datos.lotes} potreros={datos.potreros} />
+            </div>
 
-          <div className={styles.seccion}>
-            <h2>Próximos movimientos sugeridos</h2>
-            <SugerenciasRotacion
-              sugerencias={datos.sugerencias}
-              lotes={datos.lotes}
-              potreros={datos.potreros}
-            />
-          </div>
-        </>
-      )}
-    </section>
+            <div className={styles.seccion}>
+              <h2>Próximos movimientos sugeridos</h2>
+              <SugerenciasRotacion
+                sugerencias={datos.sugerencias}
+                lotes={datos.lotes}
+                potreros={datos.potreros}
+              />
+            </div>
+          </>
+        )}
+      </section>
+    </RequireAuth>
   );
 }

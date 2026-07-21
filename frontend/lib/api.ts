@@ -1,10 +1,13 @@
 /** Wrapper de acceso a la API del backend.
  *
  * Todos los componentes deben pasar por aquí (nunca fetch directo): centraliza
- * base URL, auth y manejo de errores. El token se inyecta desde sessionStorage
- * (en integración con Supabase Auth se reemplaza el origen del token, no los
- * call sites).
+ * base URL, auth y manejo de errores. El token sale de la sesión de Supabase
+ * (persistida y refrescada por supabase-js) — `supabase.auth.getSession()`
+ * resuelve del caché en memoria/localStorage sin llamada de red salvo que
+ * el token esté vencido y necesite refrescarse.
  */
+
+import { supabase } from "./supabase";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -18,13 +21,14 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const token =
-    typeof window !== "undefined" ? sessionStorage.getItem("srp_token") : null;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const res = await fetch(`${BASE_URL}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}),
       ...init?.headers,
     },
   });

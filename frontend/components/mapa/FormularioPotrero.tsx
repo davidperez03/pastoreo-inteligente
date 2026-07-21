@@ -41,7 +41,9 @@ export default function FormularioPotrero({
   const [metodo, setMetodo] = useState<MetodoLevantamiento>("gps_celular");
   const [accuracy, setAccuracy] = useState("5");
   // finca_id como texto temporal: en integración vendrá de la sesión/selector.
-  const [fincaId, setFincaId] = useState("");
+  // Precargado con la finca de backend/scripts/seed_demo.py para poder
+  // probar el formulario sin tener que copiar el id a mano.
+  const [fincaId, setFincaId] = useState("22222222-2222-2222-2222-222222222222");
   const [estado, setEstado] = useState<EstadoEnvio>({ tipo: "inicial" });
 
   async function enviar(evento: FormEvent<HTMLFormElement>) {

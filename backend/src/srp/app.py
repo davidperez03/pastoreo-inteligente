@@ -7,9 +7,11 @@ eventos. Los contextos entre sí solo se comunican por esos eventos (§17).
 
 from __future__ import annotations
 
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from srp.calibracion.application.handler import CalibrarPotreroAlSalirLote
 from srp.calibracion.infrastructure.repositorio_sistema import (
@@ -54,6 +56,20 @@ async def _lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     app = FastAPI(title="SRP — Sistema de Rotación de Pastos", lifespan=_lifespan)
+
+    # Dev/demo: el frontend (puerto distinto) necesita CORS explícito para que
+    # el navegador no bloquee las llamadas. SRP_CORS_ORIGINS (coma-separado)
+    # sobreescribe el default en despliegues reales.
+    origenes = os.environ.get(
+        "SRP_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
+    ).split(",")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origenes,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     @app.get("/health")
     async def health() -> dict:

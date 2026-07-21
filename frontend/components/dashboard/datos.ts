@@ -15,8 +15,11 @@ import type {
   SugerenciaRotacion,
 } from "./tipos";
 
-/** Finca por defecto mientras no exista selector de finca en la UI. */
-export const FINCA_DEMO_ID = "finca-demo";
+/** Finca por defecto mientras no exista selector de finca en la UI.
+ * Coincide con FINCA_ID de backend/scripts/seed_demo.py para que el
+ * dashboard muestre datos reales apenas se siembra la demo y se fija el
+ * token (en vez de caer siempre al fallback de mocks). */
+export const FINCA_DEMO_ID = "22222222-2222-2222-2222-222222222222";
 
 async function conFallback<T>(
   peticion: () => Promise<T>,
